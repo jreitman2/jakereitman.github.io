@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jacob Reitman - South Africa Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Jacob Reitman</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">Work</a></li>
+                <li>
+                    <a href="photography.html">Photography</a>
+                    <div class="dropdown">
+                        <a href="gallery-australia.html">Australia & New Zealand</a>
+                        <a href="gallery-india.html">India</a>
+                        <a href="gallery-southafrica.html">South Africa</a>
+                    </div>
+                </li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="photography">
+            <h2>South Africa</h2>
+            <div class="carousel-container">
+                <div class="carousel" id="southafrica-carousel">
+                    <div class="carousel-slide">
+                        <img src="images/7.jpg" alt="South Africa 1">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="images/8.jpg" alt="South Africa 2">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="images/9.jpg" alt="South Africa 3">
+                    </div>
+                </div>
+                <button class="carousel-button prev" onclick="moveSlide('southafrica-carousel', -1)">&#10094;</button>
+                <button class="carousel-button next" onclick="moveSlide('southafrica-carousel', 1)">&#10095;</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Jacob Reitman</p>
+    </footer>
+
+    <script>
+        let currentSlides = {};
+
+        function moveSlide(carouselId, direction) {
+            const carousel = document.getElementById(carouselId);
+            if (!currentSlides[carouselId]) currentSlides[carouselId] = 0;
+            
+            const slides = carousel.children.length;
+            currentSlides[carouselId] = (currentSlides[carouselId] + direction + slides) % slides;
+            
+            carousel.style.transform = `translateX(-${currentSlides[carouselId] * 100}%)`;
+        }
+    </script>
+</body>
+</html> 
