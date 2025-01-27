@@ -1,0 +1,140 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Times New Roman', serif;
+    line-height: 1.4;
+    color: #000;
+    background: #fff;
+    padding: 2rem;
+}
+
+header {
+    background-color: transparent;
+    padding: 2rem 0;
+    margin-bottom: 4rem;
+}
+
+nav {
+    margin: 2rem 0;
+    font-family: monospace;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+nav ul li a {
+    color: #000;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    background: transparent;
+    padding: 0;
+    margin-bottom: 6rem;
+}
+
+.profile-image {
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+h1, h2, h3, h4 {
+    font-weight: normal;
+    font-family: 'Times New Roman', serif;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.tagline {
+    font-style: italic;
+    font-size: 1.2rem;
+    margin: 2rem 0;
+}
+
+.expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 4rem;
+    margin: 4rem 0;
+}
+
+.expertise-item {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+.expertise-item h4 {
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.accomplishment-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 4rem;
+    margin: 4rem 0;
+}
+
+.card {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    border-top: 1px solid #000;
+    padding-top: 2rem;
+}
+
+.job {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.date {
+    font-family: monospace;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+footer {
+    margin-top: 6rem;
+    padding: 2rem 0;
+    font-family: monospace;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border-top: 1px solid #000;
+} 
