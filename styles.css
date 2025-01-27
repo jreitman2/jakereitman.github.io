@@ -152,39 +152,9 @@ main {
     max-width: 1000px;
     margin: 0 auto;
     padding: 2rem 0;
-    text-align: center;
 }
 
 .expertise-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.expertise-item {
-    padding: 1.5rem;
-}
-
-.expertise-item h4 {
-    font-size: 1.3rem;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-.expertise-item p {
-    color: #666;
-    line-height: 1.6;
-}
-
-.accomplishments {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 2rem 0;
-    text-align: center;
-}
-
-.accomplishment-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
