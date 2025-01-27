@@ -58,7 +58,7 @@
             const carousel = document.getElementById(carouselId);
             if (!currentSlides[carouselId]) currentSlides[carouselId] = 0;
             
-            const slides = carousel.children.length;
+            const slides = carousel.getElementsByClassName('carousel-slide').length;
             currentSlides[carouselId] = (currentSlides[carouselId] + direction + slides) % slides;
             
             carousel.style.transform = `translateX(-${currentSlides[carouselId] * 100}%)`;
