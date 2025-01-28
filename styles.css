@@ -797,16 +797,25 @@ footer {
     }
 }
 
+.purchase-container {
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 .purchase-button {
     display: inline-block;
     background-color: #3498db;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     text-decoration: none;
     border-radius: 25px;
-    margin-top: 15px;
-    transition: all 0.3s ease;
     font-weight: 500;
+    transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -840,4 +849,29 @@ footer {
 
 .print-info p:last-child {
     margin-bottom: 0;
+}
+
+.welcome-message {
+    max-width: 800px;
+    margin: 2rem auto 3rem;
+    text-align: center;
+    padding: 0 2rem;
+}
+
+.welcome-message p {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+@media (max-width: 768px) {
+    .welcome-message {
+        margin: 1.5rem auto 2rem;
+        padding: 0 1rem;
+    }
+    
+    .welcome-message p {
+        font-size: 1.1rem;
+    }
 } 
