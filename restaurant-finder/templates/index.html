@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Reservation Finder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 32px;
+            font-size: 1.05rem;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .input-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        .tab-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: #555;
+            color: #ddd;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #666;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .location-row {
+            margin-top: 16px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Status */
+        .status {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            display: none;
+        }
+
+        .status.visible {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Results */
+        .results-section {
+            margin-top: 24px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .results-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .results-count {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .restaurant-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .restaurant-card:hover {
+            border-color: #444;
+        }
+
+        .restaurant-card.has-availability {
+            border-color: #2d5a3d;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .restaurant-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-available {
+            background: #1a3d2a;
+            color: #4ade80;
+        }
+
+        .badge-unavailable {
+            background: #2a1a1a;
+            color: #f87171;
+        }
+
+        .badge-not-found {
+            background: #1a1a2a;
+            color: #818cf8;
+        }
+
+        .platform-results {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .platform-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .platform-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #aaa;
+            min-width: 80px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slots {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .slot {
+            padding: 6px 12px;
+            background: #1a3d2a;
+            border: 1px solid #2d5a3d;
+            border-radius: 6px;
+            color: #4ade80;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .slot:hover {
+            background: #2d5a3d;
+        }
+
+        .no-slots {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .platform-link {
+            margin-left: auto;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .platform-link:hover {
+            color: #fff;
+        }
+
+        .error-msg {
+            background: #2a1a1a;
+            border: 1px solid #3d1a1a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #f87171;
+            font-size: 0.9rem;
+            margin-top: 12px;
+        }
+
+        .info-box {
+            background: #1a1a2a;
+            border: 1px solid #2a2a3d;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #818cf8;
+            font-size: 0.85rem;
+            margin-top: 16px;
+            line-height: 1.5;
+        }
+
+        /* Parsed restaurants list */
+        .parsed-list {
+            margin-top: 16px;
+        }
+
+        .parsed-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #222;
+        }
+
+        .parsed-item:last-child {
+            border-bottom: none;
+        }
+
+        .parsed-item input[type="checkbox"] {
+            accent-color: #fff;
+        }
+
+        .parsed-item-name {
+            font-size: 0.95rem;
+        }
+
+        .parsed-item-addr {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Restaurant Reservation Finder</h1>
+        <p class="subtitle">Paste your Google Maps list and find available reservations</p>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <h2>Restaurant List</h2>
+            <div class="tab-row">
+                <button class="tab-btn active" data-tab="url" onclick="switchTab('url')">
+                    Google Maps URL
+                </button>
+                <button class="tab-btn" data-tab="manual" onclick="switchTab('manual')">
+                    Paste Names
+                </button>
+            </div>
+
+            <div id="tab-url">
+                <input type="text" id="maps-url" placeholder="Paste your Google Maps shared list URL...">
+            </div>
+            <div id="tab-manual" style="display: none;">
+                <textarea id="manual-list" placeholder="Enter restaurant names, one per line...&#10;&#10;e.g.&#10;Carbone&#10;Don Angie&#10;Via Carota"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="date-input">
+                </div>
+                <div class="form-group">
+                    <label>Time</label>
+                    <input type="time" id="time-input" value="19:00">
+                </div>
+                <div class="form-group">
+                    <label>Party Size</label>
+                    <input type="number" id="party-size" value="2" min="1" max="20">
+                </div>
+            </div>
+
+            <div class="form-group location-row">
+                <label>City / Location (helps narrow search)</label>
+                <input type="text" id="location-input" placeholder="e.g. New York, San Francisco, Los Angeles...">
+            </div>
+
+            <button class="btn-primary" id="find-btn" onclick="findReservations()">
+                Find Reservations
+            </button>
+        </div>
+
+        <!-- Parsed list preview -->
+        <div id="parsed-section" class="input-section" style="display: none;">
+            <h2>Restaurants Found</h2>
+            <div id="parsed-list" class="parsed-list"></div>
+            <button class="btn-primary" id="check-btn" onclick="checkAvailability()">
+                Check Availability
+            </button>
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="status">
+            <span class="spinner"></span>
+            <span id="status-text">Searching...</span>
+        </div>
+
+        <!-- Results -->
+        <div id="results-section" class="results-section" style="display: none;"></div>
+
+        <div class="info-box" id="api-info" style="display: none;">
+            <strong>Note:</strong> Resy requires an API key. Set the <code>RESY_API_KEY</code>
+            environment variable to enable Resy availability checks.
+            OpenTable checking works without an API key.
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'url';
+        let parsedRestaurants = [];
+        let resyConfigured = false;
+
+        // Set default date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('date-input').value = tomorrow.toISOString().split('T')[0];
+
+        // Check config on load
+        fetch('/api/config')
+            .then(r => r.json())
+            .then(data => {
+                resyConfigured = data.resy_configured;
+                if (!resyConfigured) {
+                    document.getElementById('api-info').style.display = 'block';
+                }
+            });
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById('tab-url').style.display = tab === 'url' ? 'block' : 'none';
+            document.getElementById('tab-manual').style.display = tab === 'manual' ? 'block' : 'none';
+        }
+
+        function showStatus(text) {
+            const el = document.getElementById('status');
+            document.getElementById('status-text').textContent = text;
+            el.classList.add('visible');
+        }
+
+        function hideStatus() {
+            document.getElementById('status').classList.remove('visible');
+        }
+
+        async function findReservations() {
+            const btn = document.getElementById('find-btn');
+            btn.disabled = true;
+
+            let inputType, value;
+            if (currentTab === 'url') {
+                inputType = 'url';
+                value = document.getElementById('maps-url').value.trim();
+            } else {
+                inputType = 'manual';
+                value = document.getElementById('manual-list').value.trim();
+            }
+
+            if (!value) {
+                alert('Please enter a Google Maps list URL or restaurant names.');
+                btn.disabled = false;
+                return;
+            }
+
+            // If manual input, skip parsing and go straight to availability check
+            if (inputType === 'manual') {
+                parsedRestaurants = value.split('\n')
+                    .map(n => n.trim())
+                    .filter(n => n.length > 0)
+                    .map(n => ({ name: n, address: '' }));
+                showParsedList();
+                btn.disabled = false;
+                return;
+            }
+
+            showStatus('Parsing Google Maps list...');
+
+            try {
+                const resp = await fetch('/api/parse-list', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: inputType, value }),
+                });
+                const data = await resp.json();
+
+                hideStatus();
+
+                if (data.error && (!data.restaurants || data.restaurants.length === 0)) {
+                    showError(data.error + ' Try pasting restaurant names manually using the "Paste Names" tab.');
+                    btn.disabled = false;
+                    return;
+                }
+
+                if (data.restaurants && data.restaurants.length > 0) {
+                    parsedRestaurants = data.restaurants;
+                    showParsedList();
+                } else {
+                    showError('No restaurants found in the list. Try using the "Paste Names" tab to enter them manually.');
+                }
+            } catch (e) {
+                hideStatus();
+                showError('Failed to parse list. Try pasting restaurant names manually.');
+            }
+
+            btn.disabled = false;
+        }
+
+        function showParsedList() {
+            const section = document.getElementById('parsed-section');
+            const list = document.getElementById('parsed-list');
+
+            list.innerHTML = parsedRestaurants.map((r, i) => `
+                <div class="parsed-item">
+                    <input type="checkbox" id="r-${i}" checked>
+                    <div>
+                        <div class="parsed-item-name">${escapeHtml(r.name)}</div>
+                        ${r.address ? `<div class="parsed-item-addr">${escapeHtml(r.address)}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            section.style.display = 'block';
+        }
+
+        async function checkAvailability() {
+            const btn = document.getElementById('check-btn');
+            btn.disabled = true;
+
+            // Get selected restaurants
+            const selected = parsedRestaurants.filter((_, i) =>
+                document.getElementById(`r-${i}`).checked
+            );
+
+            if (selected.length === 0) {
+                alert('Please select at least one restaurant.');
+                btn.disabled = false;
+                return;
+            }
+
+            const date = document.getElementById('date-input').value;
+            const time = document.getElementById('time-input').value;
+            const partySize = parseInt(document.getElementById('party-size').value) || 2;
+            const location = document.getElementById('location-input').value.trim();
+
+            if (!date) {
+                alert('Please select a date.');
+                btn.disabled = false;
+                return;
+            }
+
+            showStatus(`Checking availability for ${selected.length} restaurant${selected.length > 1 ? 's' : ''}...`);
+
+            try {
+                const resp = await fetch('/api/check-availability', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        restaurants: selected,
+                        date,
+                        time,
+                        party_size: partySize,
+                        location,
+                    }),
+                });
+                const data = await resp.json();
+
+                hideStatus();
+
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    showResults(data.results, date, time, partySize);
+                }
+            } catch (e) {
+                hideStatus();
+                showError('Failed to check availability. Please try again.');
+            }
+
+            btn.disabled = false;
+        }
+
+        function showResults(results, date, time, partySize) {
+            const section = document.getElementById('results-section');
+            const availableCount = results.filter(r =>
+                r.platforms.some(p => p.available)
+            ).length;
+
+            const dateStr = new Date(date + 'T00:00').toLocaleDateString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric'
+            });
+            const timeStr = formatTime(time);
+
+            let html = `
+                <div class="results-header">
+                    <h2>Results for ${dateStr} at ${timeStr}, party of ${partySize}</h2>
+                    <span class="results-count">${availableCount} of ${results.length} available</span>
+                </div>
+            `;
+
+            for (const r of results) {
+                const hasAvailability = r.platforms.some(p => p.available);
+                const allNotFound = r.platforms.every(p => !p.found);
+
+                let badgeClass, badgeText;
+                if (hasAvailability) {
+                    badgeClass = 'badge-available';
+                    badgeText = 'Available';
+                } else if (allNotFound) {
+                    badgeClass = 'badge-not-found';
+                    badgeText = 'Not Found';
+                } else {
+                    badgeClass = 'badge-unavailable';
+                    badgeText = 'No Availability';
+                }
+
+                html += `
+                    <div class="restaurant-card ${hasAvailability ? 'has-availability' : ''}">
+                        <div class="card-header">
+                            <span class="restaurant-name">${escapeHtml(r.name)}</span>
+                            <span class="badge ${badgeClass}">${badgeText}</span>
+                        </div>
+                        <div class="platform-results">
+                `;
+
+                for (const p of r.platforms) {
+                    html += `
+                        <div class="platform-row">
+                            <span class="platform-name">${escapeHtml(p.platform)}</span>
+                    `;
+
+                    if (!p.found) {
+                        html += `<span class="no-slots">Not listed on ${p.platform}</span>`;
+                    } else if (p.available && p.slots.length > 0) {
+                        html += '<div class="slots">';
+                        for (const slot of p.slots.slice(0, 6)) {
+                            const slotTime = formatSlotTime(slot.time);
+                            html += `<span class="slot">${slotTime}</span>`;
+                        }
+                        if (p.slots.length > 6) {
+                            html += `<span class="slot">+${p.slots.length - 6} more</span>`;
+                        }
+                        html += '</div>';
+                    } else {
+                        html += `<span class="no-slots">No times available</span>`;
+                    }
+
+                    if (p.url) {
+                        html += `<a href="${escapeHtml(p.url)}" target="_blank" class="platform-link">View &rarr;</a>`;
+                    }
+
+                    html += '</div>';
+                }
+
+                if (r.error) {
+                    html += `<div class="no-slots" style="color: #f87171;">${escapeHtml(r.error)}</div>`;
+                }
+
+                html += '</div></div>';
+            }
+
+            section.innerHTML = html;
+            section.style.display = 'block';
+        }
+
+        function showError(message) {
+            const section = document.getElementById('results-section');
+            section.innerHTML = `<div class="error-msg">${escapeHtml(message)}</div>`;
+            section.style.display = 'block';
+        }
+
+        function formatTime(timeStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const hour = h % 12 || 12;
+            return `${hour}:${String(m).padStart(2, '0')} ${ampm}`;
+        }
+
+        function formatSlotTime(timeStr) {
+            if (!timeStr) return '—';
+            // Handle ISO datetime strings
+            if (timeStr.includes('T')) {
+                const d = new Date(timeStr);
+                return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            }
+            // Handle HH:MM strings
+            if (timeStr.includes(':')) {
+                return formatTime(timeStr);
+            }
+            return timeStr;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str || '';
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
