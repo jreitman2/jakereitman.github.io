@@ -10,6 +10,9 @@ from datetime import datetime
 
 RESY_API_BASE = "https://api.resy.com"
 
+# Public API key extracted from Resy's client-side JavaScript
+DEFAULT_API_KEY = "VbWk7s3L4KiK5fzlO7JD3Q5EYolJI7n5"
+
 # Default headers for Resy API requests
 DEFAULT_HEADERS = {
     "Authorization": 'ResyAPI api_key="{api_key}"',
@@ -109,6 +112,8 @@ def check_availability(
         "day": date,
         "party_size": party_size,
         "venue_id": venue_id,
+        "lat": "0",
+        "long": "0",
     }
 
     try:

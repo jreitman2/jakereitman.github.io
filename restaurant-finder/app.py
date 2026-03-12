@@ -11,14 +11,14 @@ from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 
 from maps_parser import parse_google_maps_list, parse_manual_list
-from resy_checker import find_and_check as resy_find
+from resy_checker import find_and_check as resy_find, DEFAULT_API_KEY as RESY_DEFAULT_KEY
 from opentable_checker import find_and_check as opentable_find
 
 load_dotenv()
 
 app = Flask(__name__)
 
-RESY_API_KEY = os.environ.get("RESY_API_KEY", "")
+RESY_API_KEY = os.environ.get("RESY_API_KEY", RESY_DEFAULT_KEY)
 
 
 @app.route("/")
