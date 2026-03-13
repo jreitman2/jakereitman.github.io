@@ -37,7 +37,6 @@
             font-size: 1.05rem;
         }
 
-        /* Input Section */
         .input-section {
             background: #1a1a1a;
             border: 1px solid #2a2a2a;
@@ -151,7 +150,6 @@
             cursor: not-allowed;
         }
 
-        /* Status */
         .status {
             text-align: center;
             padding: 20px;
@@ -179,7 +177,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Results */
         .results-section {
             margin-top: 24px;
         }
@@ -222,7 +219,11 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 12px;
+            margin-bottom: 4px;
+        }
+
+        .card-header-only {
+            margin-bottom: 0;
         }
 
         .restaurant-name {
@@ -255,31 +256,11 @@
             color: #818cf8;
         }
 
-        .platform-results {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .platform-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .platform-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #aaa;
-            min-width: 80px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
         .slots {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            margin-top: 12px;
         }
 
         .slot {
@@ -301,16 +282,18 @@
         .no-slots {
             font-size: 0.85rem;
             color: #666;
+            margin-top: 8px;
         }
 
-        .platform-link {
-            margin-left: auto;
+        .resy-link {
             color: #888;
             text-decoration: none;
             font-size: 0.85rem;
+            margin-top: 10px;
+            display: inline-block;
         }
 
-        .platform-link:hover {
+        .resy-link:hover {
             color: #fff;
         }
 
@@ -324,18 +307,6 @@
             margin-top: 12px;
         }
 
-        .info-box {
-            background: #1a1a2a;
-            border: 1px solid #2a2a3d;
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: #818cf8;
-            font-size: 0.85rem;
-            margin-top: 16px;
-            line-height: 1.5;
-        }
-
-        /* Parsed restaurants list */
         .parsed-list {
             margin-top: 16px;
         }
@@ -375,10 +346,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>Restaurant Reservation Finder</h1>
-        <p class="subtitle">Paste your Google Maps list and find available reservations</p>
+        <h1>Resy Reservation Finder</h1>
+        <p class="subtitle">Paste your Google Maps list and find available Resy reservations</p>
 
-        <!-- Input Section -->
         <div class="input-section">
             <h2>Restaurant List</h2>
             <div class="tab-row">
@@ -422,36 +392,26 @@
             </button>
         </div>
 
-        <!-- Parsed list preview -->
         <div id="parsed-section" class="input-section" style="display: none;">
             <h2>Restaurants Found</h2>
             <div id="parsed-list" class="parsed-list"></div>
             <button class="btn-primary" id="check-btn" onclick="checkAvailability()">
-                Check Availability
+                Check Resy Availability
             </button>
         </div>
 
-        <!-- Status -->
         <div id="status" class="status">
             <span class="spinner"></span>
             <span id="status-text">Searching...</span>
         </div>
 
-        <!-- Results -->
         <div id="results-section" class="results-section" style="display: none;"></div>
-
-        <div class="info-box">
-            <strong>How it works:</strong> Resy availability is checked live via their API.
-            OpenTable blocks server-side requests, so we generate direct search links you can
-            open in your browser to check availability there.
-        </div>
     </div>
 
     <script>
         let currentTab = 'url';
         let parsedRestaurants = [];
 
-        // Set default date to tomorrow
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         document.getElementById('date-input').value = tomorrow.toISOString().split('T')[0];
@@ -493,7 +453,6 @@
                 return;
             }
 
-            // If manual input, skip parsing and go straight to availability check
             if (inputType === 'manual') {
                 parsedRestaurants = value.split('\n')
                     .map(n => n.trim())
@@ -557,7 +516,6 @@
             const btn = document.getElementById('check-btn');
             btn.disabled = true;
 
-            // Get selected restaurants
             const selected = parsedRestaurants.filter((_, i) =>
                 document.getElementById(`r-${i}`).checked
             );
@@ -579,7 +537,7 @@
                 return;
             }
 
-            showStatus(`Checking availability for ${selected.length} restaurant${selected.length > 1 ? 's' : ''}...`);
+            showStatus(`Checking Resy for ${selected.length} restaurant${selected.length > 1 ? 's' : ''}...`);
 
             try {
                 const resp = await fetch('/api/check-availability', {
@@ -612,9 +570,7 @@
 
         function showResults(results, date, time, partySize) {
             const section = document.getElementById('results-section');
-            const resyAvailableCount = results.filter(r =>
-                r.platforms.some(p => p.platform === 'resy' && p.available === true)
-            ).length;
+            const availableCount = results.filter(r => r.result && r.result.available).length;
 
             const dateStr = new Date(date + 'T00:00').toLocaleDateString('en-US', {
                 weekday: 'short', month: 'short', day: 'numeric'
@@ -624,76 +580,62 @@
             let html = `
                 <div class="results-header">
                     <h2>Results for ${dateStr} at ${timeStr}, party of ${partySize}</h2>
-                    <span class="results-count">${resyAvailableCount} of ${results.length} have Resy availability</span>
+                    <span class="results-count">${availableCount} of ${results.length} available</span>
                 </div>
             `;
 
             for (const r of results) {
-                const hasResyAvailability = r.platforms.some(p => p.platform === 'resy' && p.available === true);
-                const resyNotFound = r.platforms.filter(p => p.platform === 'resy').every(p => !p.found);
-                const resyNoSlots = r.platforms.some(p => p.platform === 'resy' && p.found && p.available === false);
+                const res = r.result || {};
+                const available = res.available;
+                const found = res.found;
+                const slots = res.slots || [];
 
                 let badgeClass, badgeText;
-                if (hasResyAvailability) {
+                if (available) {
                     badgeClass = 'badge-available';
-                    badgeText = 'Available on Resy';
-                } else if (resyNotFound) {
+                    badgeText = 'Available';
+                } else if (!found) {
                     badgeClass = 'badge-not-found';
                     badgeText = 'Not on Resy';
-                } else if (resyNoSlots) {
-                    badgeClass = 'badge-unavailable';
-                    badgeText = 'No Resy Availability';
                 } else {
-                    badgeClass = 'badge-not-found';
-                    badgeText = 'Check Links';
+                    badgeClass = 'badge-unavailable';
+                    badgeText = 'No Availability';
                 }
 
+                const hasSlots = available && slots.length > 0;
+
                 html += `
-                    <div class="restaurant-card ${hasResyAvailability ? 'has-availability' : ''}">
-                        <div class="card-header">
+                    <div class="restaurant-card ${available ? 'has-availability' : ''}">
+                        <div class="card-header ${!hasSlots && !res.url ? 'card-header-only' : ''}">
                             <span class="restaurant-name">${escapeHtml(r.name)}</span>
                             <span class="badge ${badgeClass}">${badgeText}</span>
                         </div>
-                        <div class="platform-results">
                 `;
 
-                for (const p of r.platforms) {
-                    html += `
-                        <div class="platform-row">
-                            <span class="platform-name">${escapeHtml(p.platform)}</span>
-                    `;
-
-                    if (!p.found) {
-                        html += `<span class="no-slots">Not listed on ${p.platform}</span>`;
-                    } else if (p.available === null) {
-                        // OpenTable: can't check server-side, show link
-                        html += `<span class="no-slots">${escapeHtml(p.note || 'Click to check availability')}</span>`;
-                    } else if (p.available && p.slots.length > 0) {
-                        html += '<div class="slots">';
-                        for (const slot of p.slots.slice(0, 6)) {
-                            const slotTime = formatSlotTime(slot.time);
-                            html += `<span class="slot">${slotTime}</span>`;
-                        }
-                        if (p.slots.length > 6) {
-                            html += `<span class="slot">+${p.slots.length - 6} more</span>`;
-                        }
-                        html += '</div>';
-                    } else {
-                        html += `<span class="no-slots">No times available</span>`;
+                if (hasSlots) {
+                    html += '<div class="slots">';
+                    for (const slot of slots.slice(0, 8)) {
+                        const slotTime = formatSlotTime(slot.time);
+                        const slotType = slot.type ? ` (${slot.type})` : '';
+                        html += `<span class="slot">${slotTime}${slotType}</span>`;
                     }
-
-                    if (p.url) {
-                        html += `<a href="${escapeHtml(p.url)}" target="_blank" class="platform-link">View &rarr;</a>`;
+                    if (slots.length > 8) {
+                        html += `<span class="slot">+${slots.length - 8} more</span>`;
                     }
-
                     html += '</div>';
+                } else if (found && !available) {
+                    html += '<div class="no-slots">No times available for this date</div>';
                 }
 
-                if (r.error) {
-                    html += `<div class="no-slots" style="color: #f87171;">${escapeHtml(r.error)}</div>`;
+                if (res.url) {
+                    html += `<a href="${escapeHtml(res.url)}" target="_blank" class="resy-link">View on Resy &rarr;</a>`;
                 }
 
-                html += '</div></div>';
+                if (res.error) {
+                    html += `<div class="no-slots" style="color: #f87171;">${escapeHtml(res.error)}</div>`;
+                }
+
+                html += '</div>';
             }
 
             section.innerHTML = html;
@@ -715,12 +657,10 @@
 
         function formatSlotTime(timeStr) {
             if (!timeStr) return '—';
-            // Handle ISO datetime strings
             if (timeStr.includes('T')) {
                 const d = new Date(timeStr);
                 return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
             }
-            // Handle HH:MM strings
             if (timeStr.includes(':')) {
                 return formatTime(timeStr);
             }

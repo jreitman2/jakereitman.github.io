@@ -2,7 +2,7 @@
 Restaurant Reservation Finder
 
 A Flask web app that takes a Google Maps restaurant list and finds
-available reservations on Resy and OpenTable.
+available reservations on Resy.
 """
 
 import os
@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 
 from maps_parser import parse_google_maps_list, parse_manual_list
 from resy_checker import find_and_check as resy_find, DEFAULT_API_KEY as RESY_DEFAULT_KEY
-from opentable_checker import find_and_check as opentable_find
 
 load_dotenv()
 
@@ -56,7 +55,7 @@ def parse_list():
 @app.route("/api/check-availability", methods=["POST"])
 def check_availability():
     """
-    Check reservation availability for a list of restaurants.
+    Check reservation availability for a list of restaurants on Resy.
 
     Expects JSON:
     {
@@ -70,7 +69,6 @@ def check_availability():
     data = request.get_json()
     restaurants = data.get("restaurants", [])
     date = data.get("date", "")
-    time = data.get("time", "19:00")
     party_size = data.get("party_size", 2)
     location = data.get("location", "")
 
@@ -84,19 +82,8 @@ def check_availability():
     def check_restaurant(restaurant):
         name = restaurant.get("name", "")
         addr = restaurant.get("address", "") or location
-
-        restaurant_results = {"name": name, "platforms": []}
-
-        # Check Resy
-        if RESY_API_KEY:
-            resy_result = resy_find(name, addr, date, party_size, RESY_API_KEY)
-            restaurant_results["platforms"].append(resy_result)
-
-        # Check OpenTable
-        opentable_result = opentable_find(name, addr, date, time, party_size)
-        restaurant_results["platforms"].append(opentable_result)
-
-        return restaurant_results
+        resy_result = resy_find(name, addr, date, party_size, RESY_API_KEY)
+        return {"name": name, "result": resy_result}
 
     # Check all restaurants concurrently
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
@@ -105,31 +92,21 @@ def check_availability():
         }
         for future in concurrent.futures.as_completed(future_to_restaurant):
             try:
-                result = future.result(timeout=30)
-                results.append(result)
+                results.append(future.result(timeout=30))
             except Exception as e:
                 restaurant = future_to_restaurant[future]
                 results.append({
                     "name": restaurant.get("name", "Unknown"),
-                    "platforms": [],
-                    "error": str(e),
+                    "result": {"found": False, "available": False, "slots": [], "error": str(e)},
                 })
 
     # Sort results: available first, then by name
     results.sort(key=lambda r: (
-        not any(p.get("available") for p in r.get("platforms", [])),
+        not r.get("result", {}).get("available", False),
         r.get("name", ""),
     ))
 
     return jsonify({"results": results})
-
-
-@app.route("/api/config", methods=["GET"])
-def get_config():
-    """Return client-safe configuration."""
-    return jsonify({
-        "resy_configured": bool(RESY_API_KEY),
-    })
 
 
 if __name__ == "__main__":
