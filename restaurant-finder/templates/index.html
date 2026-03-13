@@ -440,32 +440,21 @@
         <!-- Results -->
         <div id="results-section" class="results-section" style="display: none;"></div>
 
-        <div class="info-box" id="api-info" style="display: none;">
-            <strong>Note:</strong> Resy requires an API key. Set the <code>RESY_API_KEY</code>
-            environment variable to enable Resy availability checks.
-            OpenTable checking works without an API key.
+        <div class="info-box">
+            <strong>How it works:</strong> Resy availability is checked live via their API.
+            OpenTable blocks server-side requests, so we generate direct search links you can
+            open in your browser to check availability there.
         </div>
     </div>
 
     <script>
         let currentTab = 'url';
         let parsedRestaurants = [];
-        let resyConfigured = false;
 
         // Set default date to tomorrow
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         document.getElementById('date-input').value = tomorrow.toISOString().split('T')[0];
-
-        // Check config on load
-        fetch('/api/config')
-            .then(r => r.json())
-            .then(data => {
-                resyConfigured = data.resy_configured;
-                if (!resyConfigured) {
-                    document.getElementById('api-info').style.display = 'block';
-                }
-            });
 
         function switchTab(tab) {
             currentTab = tab;
@@ -623,8 +612,8 @@
 
         function showResults(results, date, time, partySize) {
             const section = document.getElementById('results-section');
-            const availableCount = results.filter(r =>
-                r.platforms.some(p => p.available)
+            const resyAvailableCount = results.filter(r =>
+                r.platforms.some(p => p.platform === 'resy' && p.available === true)
             ).length;
 
             const dateStr = new Date(date + 'T00:00').toLocaleDateString('en-US', {
@@ -635,28 +624,32 @@
             let html = `
                 <div class="results-header">
                     <h2>Results for ${dateStr} at ${timeStr}, party of ${partySize}</h2>
-                    <span class="results-count">${availableCount} of ${results.length} available</span>
+                    <span class="results-count">${resyAvailableCount} of ${results.length} have Resy availability</span>
                 </div>
             `;
 
             for (const r of results) {
-                const hasAvailability = r.platforms.some(p => p.available);
-                const allNotFound = r.platforms.every(p => !p.found);
+                const hasResyAvailability = r.platforms.some(p => p.platform === 'resy' && p.available === true);
+                const resyNotFound = r.platforms.filter(p => p.platform === 'resy').every(p => !p.found);
+                const resyNoSlots = r.platforms.some(p => p.platform === 'resy' && p.found && p.available === false);
 
                 let badgeClass, badgeText;
-                if (hasAvailability) {
+                if (hasResyAvailability) {
                     badgeClass = 'badge-available';
-                    badgeText = 'Available';
-                } else if (allNotFound) {
+                    badgeText = 'Available on Resy';
+                } else if (resyNotFound) {
                     badgeClass = 'badge-not-found';
-                    badgeText = 'Not Found';
-                } else {
+                    badgeText = 'Not on Resy';
+                } else if (resyNoSlots) {
                     badgeClass = 'badge-unavailable';
-                    badgeText = 'No Availability';
+                    badgeText = 'No Resy Availability';
+                } else {
+                    badgeClass = 'badge-not-found';
+                    badgeText = 'Check Links';
                 }
 
                 html += `
-                    <div class="restaurant-card ${hasAvailability ? 'has-availability' : ''}">
+                    <div class="restaurant-card ${hasResyAvailability ? 'has-availability' : ''}">
                         <div class="card-header">
                             <span class="restaurant-name">${escapeHtml(r.name)}</span>
                             <span class="badge ${badgeClass}">${badgeText}</span>
@@ -672,6 +665,9 @@
 
                     if (!p.found) {
                         html += `<span class="no-slots">Not listed on ${p.platform}</span>`;
+                    } else if (p.available === null) {
+                        // OpenTable: can't check server-side, show link
+                        html += `<span class="no-slots">${escapeHtml(p.note || 'Click to check availability')}</span>`;
                     } else if (p.available && p.slots.length > 0) {
                         html += '<div class="slots">';
                         for (const slot of p.slots.slice(0, 6)) {

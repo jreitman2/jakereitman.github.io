@@ -4,8 +4,8 @@ Resy Availability Checker
 Uses the Resy public API to search for restaurants and check reservation availability.
 """
 
+import json
 import requests
-from datetime import datetime
 
 
 RESY_API_BASE = "https://api.resy.com"
@@ -13,54 +13,54 @@ RESY_API_BASE = "https://api.resy.com"
 # Public API key extracted from Resy's client-side JavaScript
 DEFAULT_API_KEY = "VbWk7s3L4KiK5fzlO7JD3Q5EYolJI7n5"
 
-# Default headers for Resy API requests
-DEFAULT_HEADERS = {
-    "Authorization": 'ResyAPI api_key="{api_key}"',
-    "Origin": "https://resy.com",
-    "Referer": "https://resy.com/",
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    ),
-}
-
 
 def _get_headers(api_key: str) -> dict:
     """Build request headers with the provided API key."""
-    headers = DEFAULT_HEADERS.copy()
-    headers["Authorization"] = f'ResyAPI api_key="{api_key}"'
-    return headers
+    return {
+        "Authorization": f'ResyAPI api_key="{api_key}"',
+        "Origin": "https://resy.com",
+        "Referer": "https://resy.com/",
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
 
 
 def search_venue(name: str, location: str, api_key: str) -> list[dict]:
     """
     Search for a restaurant on Resy by name and location.
 
-    Args:
-        name: Restaurant name
-        location: City or address for context
-        api_key: Resy API key
-
     Returns:
         List of matching venues with id, name, and location info
     """
     headers = _get_headers(api_key)
 
-    # Use the venue search endpoint
-    params = {
-        "per_page": 5,
-        "query": name,
-        "types": ["venue"],
+    geo = {}
+    # Common city coordinates for better search results
+    city_coords = {
+        "new york": {"latitude": 40.7128, "longitude": -74.0060},
+        "los angeles": {"latitude": 34.0522, "longitude": -118.2437},
+        "san francisco": {"latitude": 37.7749, "longitude": -122.4194},
+        "chicago": {"latitude": 41.8781, "longitude": -87.6298},
+        "miami": {"latitude": 25.7617, "longitude": -80.1918},
     }
+    for city, coords in city_coords.items():
+        if city in location.lower():
+            geo = coords
+            break
 
-    if location:
-        params["query"] = f"{name} {location}"
+    # Use only restaurant name in query — geo handles location filtering.
+    # Appending location to the query confuses Resy's search.
+    struct_data = json.dumps({
+        "query": name,
+        "per_page": 10,
+        "types": ["venue"],
+        **({"geo": geo} if geo else {}),
+    })
 
     try:
-        resp = requests.get(
+        resp = requests.post(
             f"{RESY_API_BASE}/3/venuesearch/search",
-            params=params,
+            data={"struct_data": struct_data},
             headers=headers,
             timeout=10,
         )
@@ -68,15 +68,20 @@ def search_venue(name: str, location: str, api_key: str) -> list[dict]:
         data = resp.json()
 
         venues = []
-        search_results = data.get("search", {}).get("hits", [])
-        for hit in search_results:
+        for hit in data.get("search", {}).get("hits", []):
             venue = hit.get("_source", hit)
+            venue_id = venue.get("id", {})
+            if isinstance(venue_id, dict):
+                venue_id = venue_id.get("resy")
+
+            location_data = venue.get("location", {})
             venues.append({
-                "id": venue.get("id", {}).get("resy") if isinstance(venue.get("id"), dict) else venue.get("id"),
+                "id": venue_id,
                 "name": venue.get("name", ""),
                 "location": {
-                    "city": venue.get("location", {}).get("city", ""),
-                    "neighborhood": venue.get("location", {}).get("neighborhood", ""),
+                    "city": location_data.get("name", ""),
+                    "neighborhood": location_data.get("neighborhood", ""),
+                    "url_slug": location_data.get("url_slug", ""),
                 },
                 "cuisine": venue.get("cuisine", []),
                 "price_range": venue.get("price_range", 0),
@@ -95,13 +100,7 @@ def check_availability(
     api_key: str,
 ) -> dict:
     """
-    Check reservation availability at a Resy venue.
-
-    Args:
-        venue_id: Resy venue ID
-        date: Date string in YYYY-MM-DD format
-        party_size: Number of guests
-        api_key: Resy API key
+    Check reservation availability at a Resy venue using /3/find.
 
     Returns:
         Dict with 'available' bool and 'slots' list of available times
@@ -118,7 +117,7 @@ def check_availability(
 
     try:
         resp = requests.get(
-            f"{RESY_API_BASE}/4/find",
+            f"{RESY_API_BASE}/3/find",
             params=params,
             headers=headers,
             timeout=10,
@@ -126,21 +125,33 @@ def check_availability(
         resp.raise_for_status()
         data = resp.json()
 
-        results = data.get("results", {})
-        venues = results.get("venues", [])
-
         slots = []
-        if venues:
-            venue_data = venues[0]
-            for slot in venue_data.get("slots", []):
-                config = slot.get("config", {})
-                date_info = slot.get("date", {})
-                slots.append({
-                    "time": date_info.get("start", ""),
-                    "end": date_info.get("end", ""),
-                    "type": config.get("type", ""),
-                    "token": config.get("token", ""),
-                })
+        results = data.get("results", [])
+
+        # Results can be a list of venue result objects
+        if isinstance(results, list):
+            for venue_result in results:
+                if not isinstance(venue_result, dict):
+                    continue
+                for slot in venue_result.get("slots", []):
+                    config = slot.get("config", {})
+                    date_info = slot.get("date", {})
+                    slots.append({
+                        "time": date_info.get("start", ""),
+                        "end": date_info.get("end", ""),
+                        "type": config.get("type", ""),
+                    })
+        elif isinstance(results, dict):
+            # Results might also be a dict with a venues key
+            for venue_data in results.get("venues", []):
+                for slot in venue_data.get("slots", []):
+                    config = slot.get("config", {})
+                    date_info = slot.get("date", {})
+                    slots.append({
+                        "time": date_info.get("start", ""),
+                        "end": date_info.get("end", ""),
+                        "type": config.get("type", ""),
+                    })
 
         return {
             "available": len(slots) > 0,
@@ -152,6 +163,23 @@ def check_availability(
         return {"available": False, "slots": [], "error": str(e)}
 
 
+def _name_similarity(query: str, candidate: str) -> float:
+    """Simple name similarity score. Higher is better."""
+    q = query.lower().strip()
+    c = candidate.lower().strip()
+    if q == c:
+        return 1.0
+    if q in c or c in q:
+        return 0.8
+    # Check word overlap
+    q_words = set(q.split())
+    c_words = set(c.split())
+    if not q_words:
+        return 0.0
+    overlap = len(q_words & c_words)
+    return overlap / max(len(q_words), len(c_words))
+
+
 def find_and_check(
     restaurant_name: str,
     location: str,
@@ -161,16 +189,6 @@ def find_and_check(
 ) -> dict:
     """
     Search for a restaurant on Resy and check its availability.
-
-    Args:
-        restaurant_name: Name of the restaurant
-        location: City or neighborhood
-        date: Date in YYYY-MM-DD format
-        party_size: Number of guests
-        api_key: Resy API key
-
-    Returns:
-        Dict with venue info and availability
     """
     venues = search_venue(restaurant_name, location, api_key)
 
@@ -195,8 +213,22 @@ def find_and_check(
             "url": "",
         }
 
-    # Use the best match (first result)
-    best = venues[0]
+    # Pick the best matching venue by name similarity
+    scored = [(v, _name_similarity(restaurant_name, v.get("name", ""))) for v in venues]
+    scored.sort(key=lambda x: x[1], reverse=True)
+    best, best_score = scored[0]
+
+    # If the best match is too poor, mark as not found
+    if best_score <= 0.5:
+        return {
+            "platform": "resy",
+            "restaurant": restaurant_name,
+            "found": False,
+            "available": False,
+            "slots": [],
+            "url": "",
+        }
+
     venue_id = best.get("id")
 
     if not venue_id:
@@ -212,8 +244,8 @@ def find_and_check(
     availability = check_availability(venue_id, date, party_size, api_key)
 
     url_slug = best.get("url_slug", "")
-    city = best.get("location", {}).get("city", "").lower().replace(" ", "-")
-    resy_url = f"https://resy.com/cities/{city}/{url_slug}" if url_slug and city else ""
+    location_slug = best.get("location", {}).get("url_slug", "")
+    resy_url = f"https://resy.com/cities/{location_slug}/{url_slug}" if url_slug and location_slug else ""
 
     return {
         "platform": "resy",
