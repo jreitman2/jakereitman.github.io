@@ -3,73 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jake Reitman</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>Jake Reitman — The Chocolate Factory</title>
+    <meta name="description" content="Jake Reitman — business development in the candy industry, travel photography, and a Pokémon battle in the break room.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
 </head>
 <body>
-    <header>
-        <h1>Jake Reitman</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">Work</a></li>
-                <li>
-                    <a href="photography.html">Photography</a>
-                    <div class="dropdown">
-                        <a href="gallery-australia.html">Australia & New Zealand</a>
-                        <a href="gallery-india.html">India</a>
-                        <a href="gallery-southafrica.html">South Africa</a>
-                    </div>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
+
+    <nav class="candy-nav">
+        <a href="#start" class="nav-logo"><span class="logo-mark">JR</span> <span>Jake Reitman</span></a>
+        <div class="nav-links">
+            <a href="#career">Career</a>
+            <a href="#arcade">Break Room</a>
+            <a href="photography.html">Photography</a>
+            <a href="#finish">Contact</a>
+        </div>
+    </nav>
+
+    <!-- ============ HERO ============ -->
+    <header class="hero" id="start">
+        <div class="floaters" aria-hidden="true">
+            <span class="floater f1">🍫</span>
+            <span class="floater f2">🪙</span>
+            <span class="floater f3">✨</span>
+            <span class="floater f4">🍫</span>
+            <span class="floater f5">🪙</span>
+            <span class="floater f6">✨</span>
+        </div>
+
+        <div class="hero-inner">
+            <div class="hero-plaque">EST. MADISON · REFINED IN CANDY</div>
+            <div class="profile-wrap">
+                <img src="images/web/profile.jpg" alt="Jake Reitman" class="profile-pic">
+            </div>
+            <h1 class="hero-title">Jake <span>Reitman</span></h1>
+            <p class="hero-sub">Purveyor of fine data — and finer chocolate.</p>
+            <p class="hero-tag">Business development at Nassau Candy.</p>
+            <a class="btn-start" href="#career">🎫 &nbsp;Begin the Tour</a>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
     </header>
 
     <main>
-        <section class="hero">
-            <img src="images/profile.jpg" alt="Jake Reitman">
-            <h2>Sr. Operations Manager at Uber Eats</h2>
-            <p>Driving enterprise solutions and operational excellence in the food delivery industry</p>
-        </section>
-            
-        <section class="expertise">
-            <div class="expertise-grid">
-                <div class="card">
-                    <h4>Operations Leadership</h4>
-                    <p>Managing US/C ENT Reporting Solutions and leading enterprise-level operational initiatives</p>
-                </div>
-                <div class="card">
-                    <h4>Team Management</h4>
-                    <p>Successfully leading and developing teams of Partner Associates and Account Coordinators</p>
-                </div>
-                <div class="card">
-                    <h4>Strategic Analysis</h4>
-                    <p>Expertise in SQL, data analysis, and implementing process improvements</p>
-                </div>
-            </div>
-        </section>
 
-        <section class="expertise">
-            <div class="expertise-grid">
-                <div class="card">
-                    <h4>Enterprise Operations</h4>
-                    <p>Leading US/C ENT Reporting Solutions and implementing enterprise-wide operational improvements</p>
-                </div>
-                <div class="card">
-                    <h4>Sales Achievement</h4>
-                    <p>Generated $100+ million in gross bookings with 400%+ quota attainment</p>
-                </div>
-                <div class="card">
-                    <h4>Team Leadership</h4>
-                    <p>Successfully managed and developed teams across multiple roles at Uber Eats</p>
+    <!-- ============ CAREER ============ -->
+    <section class="board-section career" id="career">
+        <div class="section-header">
+            <div class="header-ornament" aria-hidden="true">✦ ✦ ✦</div>
+            <h2>Career</h2>
+        </div>
+
+        <div class="game-path">
+
+            <div class="path-space space-current">
+                <div class="space-year">Now</div>
+                <div class="space-card">
+                    <h3>Nassau Candy</h3>
+                    <h4>Business Development</h4>
+                    <p>Focusing on hospitality and food service.</p>
+                    <p class="card-link">
+                        <a href="https://www.nassaucandy.com" target="_blank" rel="noopener">nassaucandy.com →</a>
+                        &nbsp;&nbsp;
+                        <a href="https://www.nccustom.com" target="_blank" rel="noopener">nccustom.com →</a>
+                    </p>
                 </div>
             </div>
-        </section>
+
+            <div class="path-connector" aria-hidden="true"></div>
+
+            <div class="path-space">
+                <div class="space-year">2025</div>
+                <div class="space-card">
+                    <div class="space-badge badge-alt">🚀 Venture</div>
+                    <h3>ReadyBase</h3>
+                    <h4>Co-Founder</h4>
+                    <p>AI-powered PDF generator — built and launched with my longtime friend and
+                        business partner.</p>
+                    <p class="card-link"><a href="https://www.producthunt.com/products/readybase" target="_blank" rel="noopener">View on Product Hunt →</a></p>
+                </div>
+            </div>
+
+            <div class="path-connector" aria-hidden="true"></div>
+
+            <div class="path-space">
+                <div class="space-year">2017 – 2025</div>
+                <div class="space-card">
+                    <h3>Uber Eats</h3>
+                    <h4>Account Rep → Account Executive → Partner Manager → Sr. Operations Manager</h4>
+                    <ul class="card-list">
+                        <li>Generated $100M+ in gross bookings with 400%+ quota attainment</li>
+                        <li>Led US &amp; Canada enterprise reporting solutions</li>
+                        <li>Managed teams of partner associates and account coordinators</li>
+                        <li>Drove restaurant partnership growth and new market launches across the US</li>
+                    </ul>
+                    <div class="brand-row">
+                        <span class="brand-pill"><img src="https://www.google.com/s2/favicons?domain=wingstop.com&amp;sz=64" alt="" loading="lazy">Wingstop</span>
+                        <span class="brand-pill"><img src="https://www.google.com/s2/favicons?domain=chilis.com&amp;sz=64" alt="" loading="lazy">Chili's</span>
+                        <span class="brand-pill"><img src="https://www.google.com/s2/favicons?domain=applebees.com&amp;sz=64" alt="" loading="lazy">Applebee's</span>
+                        <span class="brand-pill"><img src="https://www.google.com/s2/favicons?domain=ihop.com&amp;sz=64" alt="" loading="lazy">IHOP</span>
+                        <span class="brand-pill"><img src="https://www.google.com/s2/favicons?domain=papajohns.com&amp;sz=64" alt="" loading="lazy">Papa John's</span>
+                        <span class="brand-pill"><img src="https://www.google.com/s2/favicons?domain=jimmyjohns.com&amp;sz=64" alt="" loading="lazy">Jimmy John's</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="path-connector" aria-hidden="true"></div>
+
+            <div class="path-space">
+                <div class="space-year">2017</div>
+                <div class="space-card">
+                    <div class="space-badge badge-alt">🎓 Where It Started</div>
+                    <h3>University of Wisconsin – Madison</h3>
+                    <h4>Political Science &amp; Legal Studies</h4>
+                    <p>Go Badgers.</p>
+                    <img class="bucky-gif" src="https://media.giphy.com/media/3o6Zt52dQMvRAtvU08/giphy.gif" alt="Bucky Badger dancing" loading="lazy">
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============ PHOTOGRAPHY ============ -->
+    <section class="board-section photo-section" id="photography">
+        <div class="section-header">
+            <div class="header-ornament" aria-hidden="true">✦ ✦ ✦</div>
+            <h2>The Gallery</h2>
+        </div>
+
+        <div class="gallery-cards">
+            <a class="gallery-card" href="photography.html#australia">
+                <img src="images/thumbs/1.jpg" alt="Australia and New Zealand photography" loading="lazy">
+                <div class="gallery-card-label">
+                    <h3>Australia &amp; New Zealand</h3>
+                    <span>View →</span>
+                </div>
+            </a>
+            <a class="gallery-card" href="photography.html#india">
+                <img src="images/thumbs/4.jpg" alt="India photography" loading="lazy">
+                <div class="gallery-card-label">
+                    <h3>India</h3>
+                    <span>View →</span>
+                </div>
+            </a>
+            <a class="gallery-card" href="photography.html#southafrica">
+                <img src="images/thumbs/7.jpg" alt="South Africa photography" loading="lazy">
+                <div class="gallery-card-label">
+                    <h3>South Africa</h3>
+                    <span>View →</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ============ BREAK ROOM / POKÉMON ============ -->
+    <section class="board-section arcade-section" id="arcade">
+        <div class="section-header">
+            <div class="header-ornament" aria-hidden="true">✦ ✦ ✦</div>
+            <h2>The Break Room</h2>
+        </div>
+
+        <div class="gba-shell">
+            <div class="gba-top">
+                <span class="gba-logo"><em>GAME BOY</em> ADVANCE SP</span>
+                <span class="gba-power">♪ &nbsp;POWER <span class="power-led"></span></span>
+            </div>
+            <div class="gba-bezel">
+                <div class="gba-screen" id="battle-root">
+                    <div class="battle-loading">Powering on…</div>
+                </div>
+            </div>
+            <div class="gba-controls">
+                <div class="dpad" aria-hidden="true"></div>
+                <div class="gba-ab">
+                    <button class="ab-btn btn-b" id="gba-b" title="B — run">B</button>
+                    <button class="ab-btn btn-a" id="gba-a" title="A — attack">A</button>
+                </div>
+            </div>
+            <div class="gba-startselect">
+                <span class="ss-pill"></span><span class="ss-pill"></span>
+            </div>
+            <div class="gba-labels"><span>START</span><span>SELECT</span></div>
+            <div class="gba-hint">A = attack &nbsp;·&nbsp; B = run</div>
+        </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="board-section finish-section" id="finish">
+        <div class="golden-ticket">
+            <div class="ticket-inner">
+                <div class="ticket-header">🎫 GOLDEN TICKET</div>
+                <h2>Greetings to you, the lucky finder</h2>
+                <div class="contact-buttons">
+                    <a href="https://www.linkedin.com/in/jake-reitman/" target="_blank" rel="noopener" class="candy-btn">LinkedIn</a>
+                    <a href="https://www.instagram.com/JakeReitman" target="_blank" rel="noopener" class="candy-btn">Instagram</a>
+                    <a href="mailto:jake.reitman@nassaucandy.com" class="candy-btn btn-gold">Email Me</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     </main>
 
-    <footer>
-        <p>&copy; 2024 Jake Reitman</p>
+    <footer class="candy-footer">
+        <p>© 2026 Jake Reitman</p>
     </footer>
+
+    <script src="pokemon.js?v=1"></script>
 </body>
-</html> 
+</html>

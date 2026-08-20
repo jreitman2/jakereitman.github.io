@@ -3,66 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jake Reitman - Photography</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>Photography — Jake Reitman</title>
+    <meta name="description" content="Travel photography by Jake Reitman — Australia & New Zealand, India, and South Africa.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📷</text></svg>">
 </head>
-<body>
-    <header>
-        <h1>Jake Reitman</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">Work</a></li>
-                <li>
-                    <a href="photography.html">Photography</a>
-                    <div class="dropdown">
-                        <a href="gallery-australia.html">Australia & New Zealand</a>
-                        <a href="gallery-india.html">India</a>
-                        <a href="gallery-southafrica.html">South Africa</a>
-                    </div>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
+<body class="photo-page">
+
+    <nav class="candy-nav">
+        <a href="index.html" class="nav-logo">🍬 <span>Jake Reitman</span></a>
+        <div class="nav-links">
+            <a href="index.html">Start</a>
+            <a href="index.html#career">Career Path</a>
+            <a href="photography.html" class="active">Photography</a>
+            <a href="index.html#finish">Contact</a>
+        </div>
+    </nav>
+
+    <header class="photo-hero">
+        <span class="section-emoji">📸</span>
+        <h1>Photography</h1>
+        <div class="photo-jump">
+            <a href="#australia" class="candy-chip" style="--chip-color: var(--sky);">Australia &amp; NZ</a>
+            <a href="#india" class="candy-chip" style="--chip-color: var(--lemon);">India</a>
+            <a href="#southafrica" class="candy-chip" style="--chip-color: var(--cherry);">South Africa</a>
+        </div>
     </header>
 
-    <main>
-        <section class="photography">
-            <h2>Photography Portfolio</h2>
-            <div class="welcome-message">
-                <p>Welcome to my photography collection! These images capture some of my favorite moments from travels around the world. I hope they bring you as much joy as they brought me while taking them. Please feel free to browse through the galleries and order any prints you'd like to have in your home!</p>
+    <main class="photo-main">
+
+        <section class="photo-gallery" id="australia">
+            <h2><span style="--underline: var(--sky);">Australia &amp; New Zealand</span></h2>
+            <div class="photo-grid">
+                <button class="photo-item" data-full="images/web/1.jpg"><img src="images/thumbs/1.jpg" alt="Australia & New Zealand photo 1" loading="lazy"></button>
+                <button class="photo-item" data-full="images/web/2.jpg"><img src="images/thumbs/2.jpg" alt="Australia & New Zealand photo 2" loading="lazy"></button>
+                <button class="photo-item" data-full="images/web/3.jpg"><img src="images/thumbs/3.jpg" alt="Australia & New Zealand photo 3" loading="lazy"></button>
             </div>
-            <div class="gallery-grid">
-                <a href="gallery-australia.html" class="gallery-link">
-                    <div class="gallery-preview">
-                        <img src="images/1.JPG" alt="Australia & New Zealand Preview">
-                        <h3>Australia & New Zealand</h3>
-                    </div>
-                </a>
-                <a href="gallery-india.html" class="gallery-link">
-                    <div class="gallery-preview">
-                        <img src="images/4.JPG" alt="India Preview">
-                        <h3>India</h3>
-                    </div>
-                </a>
-                <a href="gallery-southafrica.html" class="gallery-link">
-                    <div class="gallery-preview">
-                        <img src="images/8.JPG" alt="South Africa Preview">
-                        <h3>South Africa</h3>
-                    </div>
-                </a>
-            </div>
-            <section class="print-info">
-                <h3>Ordering Prints</h3>
-                <p>Want a print of any of these photos? I've partnered with Mpix to make it easy for friends and family to order high-quality prints. Just click the "Order Print via Mpix" button below any photo in the galleries to order your own copy. Mpix offers various sizes, paper types, and framing options to suit your needs.</p>
-                <p>The prints are shipped directly to you, and you'll only pay for the cost of printing and shipping - no markup! For the best results, I recommend the E-Surface Paper for standard prints or Metallic Paper for a more vibrant look.</p>
-                <p>Thank you for visiting my gallery - I hope you find a photo that speaks to you!</p>
-            </section>
         </section>
+
+        <section class="photo-gallery" id="india">
+            <h2><span style="--underline: var(--lemon);">India</span></h2>
+            <div class="photo-grid">
+                <button class="photo-item" data-full="images/web/4.jpg"><img src="images/thumbs/4.jpg" alt="India photo 1" loading="lazy"></button>
+                <button class="photo-item" data-full="images/web/5.jpg"><img src="images/thumbs/5.jpg" alt="India photo 2" loading="lazy"></button>
+                <button class="photo-item" data-full="images/web/6.jpg"><img src="images/thumbs/6.jpg" alt="India photo 3" loading="lazy"></button>
+            </div>
+        </section>
+
+        <section class="photo-gallery" id="southafrica">
+            <h2><span style="--underline: var(--cherry);">South Africa</span></h2>
+            <div class="photo-grid">
+                <button class="photo-item" data-full="images/web/7.jpg"><img src="images/thumbs/7.jpg" alt="South Africa photo 1" loading="lazy"></button>
+                <button class="photo-item" data-full="images/web/8.jpg"><img src="images/thumbs/8.jpg" alt="South Africa photo 2" loading="lazy"></button>
+                <button class="photo-item" data-full="images/web/9.jpg"><img src="images/thumbs/9.jpg" alt="South Africa photo 3" loading="lazy"></button>
+            </div>
+        </section>
+
+        <div class="more-soon">🍬 More expeditions coming soon…</div>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Jake Reitman</p>
+    <div class="lightbox" id="lightbox" hidden>
+        <button class="lightbox-close" aria-label="Close">✕</button>
+        <img src="" alt="Full size photo" id="lightbox-img">
+    </div>
+
+    <footer class="candy-footer">
+        <p>© 2026 Jake Reitman</p>
     </footer>
+
+    <script>
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        document.querySelectorAll('.photo-item').forEach(item => {
+            item.addEventListener('click', () => {
+                lightboxImg.src = item.dataset.full;
+                lightbox.hidden = false;
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        function closeLightbox() {
+            lightbox.hidden = true;
+            lightboxImg.src = '';
+            document.body.style.overflow = '';
+        }
+        lightbox.addEventListener('click', closeLightbox);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+    </script>
 </body>
-</html> 
+</html>
